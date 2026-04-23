@@ -5,20 +5,23 @@
             <div class="space-y-4">
                 @forelse ($notes as $note)
                     <a href="{{ route('notes.show', $note) }}" class="block rounded-[24px] border border-[#E8E6E1] bg-white p-6 shadow-sm transition hover:shadow-md dark:border-[#3E3E3A] dark:bg-[#111111] dark:hover:bg-[#1a1a1a]">
-                        <div class="mb-3 flex items-start justify-between gap-4">
-                            <div class="flex-1">
-                                <div class="prose prose-sm dark:prose-invert max-w-none mb-2 line-clamp-3 text-[#1b1b18] dark:text-[#F7F7F5]">
-                                    {!! $note->content !!}
-                                </div>
-                                @if ($note->tags)
-                                    <div class="flex flex-wrap gap-2 mt-3">
-                                        @foreach (explode(',', $note->tags) as $tag)
-                                            <span class="inline-block rounded-full bg-[#f0f0f0] px-3 py-1 text-xs font-medium text-[#6f6d69] dark:bg-[#1a1a1a] dark:text-[#A1A09A]">
-                                                {{ trim($tag) }}
-                                            </span>
-                                        @endforeach
-                                    </div>
+                        <div class="mb-3">
+                            <div class="flex items-center gap-2 mb-2">
+                                @if($note->category)
+                                    <span class="text-[10px] font-bold uppercase tracking-wider text-[#f53003] dark:text-[#ff6b35]">
+                                        {{ $note->category->name }}
+                                    </span>
+                                    <span class="text-[#e3e3e0]">•</span>
                                 @endif
+                                <span class="text-[10px] font-semibold uppercase tracking-wider {{ $note->status === 'published' ? 'text-green-600' : 'text-amber-500' }}">
+                                    {{ $note->status }}
+                                </span>
+                            </div>
+                            <h2 class="text-xl font-bold text-[#1b1b18] dark:text-white mb-2">
+                                {{ $note->title ?? 'Tanpa Judul' }}
+                            </h2>
+                            <div class="prose prose-sm dark:prose-invert max-w-none line-clamp-2 text-[#6f6d69] dark:text-[#A1A09A]">
+                                {!! strip_tags($note->content) !!}
                             </div>
                         </div>
                         <div class="flex items-center justify-between gap-4 border-t border-[#e3e3e0] pt-3 text-xs text-[#9b998f] dark:border-[#3E3E3A] dark:text-[#706f6c]">

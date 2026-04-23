@@ -2,6 +2,40 @@
 
 @section('title', config('app.name', 'Laravel') . ' - Detail Catatan')
 
+@section('styles')
+    <style>
+        .note-content img {
+            max-width: 100%;
+            height: auto;
+            border-radius: 16px;
+            margin: 1.5rem 0;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+        }
+        .note-content ul {
+            list-style-type: disc;
+            padding-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        .note-content ol {
+            list-style-type: decimal;
+            padding-left: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        .note-content h2, .note-content h3, .note-content h4 {
+            font-weight: 600;
+            margin-top: 1.5rem;
+            margin-bottom: 0.5rem;
+        }
+        .note-content blockquote {
+            border-left: 4px solid #f53003;
+            padding-left: 1rem;
+            font-style: italic;
+            color: #6f6d69;
+            margin: 1rem 0;
+        }
+    </style>
+@endsection
+
 @section('content')
             <div class="mb-6">
                 <a href="{{ route('home') }}" class="inline-flex items-center gap-2 rounded-2xl border border-[#e3e3e0] px-4 py-2 text-sm font-medium text-[#1b1b18] transition hover:bg-[#F4F2F0] dark:border-[#3E3E3A] dark:text-[#F7F7F5] dark:hover:bg-[#141414]">
@@ -16,8 +50,25 @@
             @endif
 
             <div class="rounded-[32px] border border-[#E8E6E1] bg-white p-8 shadow-sm dark:border-[#3E3E3A] dark:bg-[#111111]">
+                <!-- Header -->
+                <div class="mb-6">
+                    <div class="flex items-center gap-3 mb-2">
+                        @if($note->category)
+                            <span class="rounded-full bg-[#f0f0f0] px-3 py-1 text-xs font-semibold text-[#1b1b18] dark:bg-[#1a1a1a] dark:text-[#F7F7F5]">
+                                📁 {{ $note->category->name }}
+                            </span>
+                        @endif
+                        <span class="rounded-full px-3 py-1 text-xs font-semibold {{ $note->status === 'published' ? 'bg-[#f0fbf2] text-[#1f5f2f]' : 'bg-[#fffbeb] text-[#92400e]' }}">
+                            {{ ucfirst($note->status) }}
+                        </span>
+                    </div>
+                    <h1 class="text-4xl font-bold text-[#111111] dark:text-white leading-tight">
+                        {{ $note->title ?? 'Tanpa Judul' }}
+                    </h1>
+                </div>
+
                 <!-- Content -->
-                <div class="mb-6 prose prose-sm dark:prose-invert max-w-none text-[#1b1b18] dark:text-[#F7F7F5]">
+                <div class="mb-6 note-content prose prose-sm dark:prose-invert max-w-none text-[#1b1b18] dark:text-[#F7F7F5]">
                     {!! $note->content !!}
                 </div>
 

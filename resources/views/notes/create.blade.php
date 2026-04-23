@@ -3,72 +3,47 @@
 @section('title', 'Buat Catatan - ' . config('app.name', 'Laravel'))
 
 @section('styles')
-    <link rel="stylesheet" href="https://cdn.quilljs.com/1.3.7/quill.snow.css">
     <style>
-        #quill-editor.ql-container {
-            font-size: 1rem;
-            font-family: inherit;
-        }
-        #quill-editor.ql-editor {
-            background-color: #FCFBF8;
-            color: #1b1b18;
+        .ck-editor__editable_inline {
             min-height: 280px;
-            padding: 1rem;
-        }
-        .ql-toolbar.ql-snow {
-            background-color: #F7F5F2 !important;
-            border: 1px solid #e3e3e0;
-            border-radius: 6px 6px 0 0;
-            color: #1b1b18;
-        }
-        .ql-toolbar.ql-snow .ql-stroke {
-            stroke: #1b1b18 !important;
-        }
-        .ql-toolbar.ql-snow .ql-fill {
-            fill: #1b1b18 !important;
-        }
-        .ql-toolbar.ql-snow .ql-picker-label {
+            background-color: #FCFBF8 !important;
             color: #1b1b18 !important;
+            border-radius: 0 0 24px 24px !important;
+            padding: 0 1.5rem !important;
         }
-        .ql-toolbar.ql-snow button:hover,
-        .ql-toolbar.ql-snow button.ql-active,
-        .ql-toolbar.ql-snow button:focus,
-        .ql-toolbar.ql-snow button:active,
-        .ql-toolbar.ql-snow .ql-picker-label:hover,
-        .ql-toolbar.ql-snow .ql-picker-item:hover,
-        .ql-toolbar.ql-snow .ql-picker-item.ql-selected {
-            color: #f53003 !important;
+        .ck-toolbar {
+            background-color: #F7F5F2 !important;
+            border-radius: 24px 24px 0 0 !important;
+            border-color: #e3e3e0 !important;
         }
-        .ql-toolbar.ql-snow button:hover .ql-stroke,
-        .ql-toolbar.ql-snow button.ql-active .ql-stroke,
-        .ql-toolbar.ql-snow .ql-picker-label:hover .ql-stroke,
-        .ql-toolbar.ql-snow .ql-picker-item:hover .ql-stroke,
-        .ql-toolbar.ql-snow .ql-picker-item.ql-selected .ql-stroke {
-            stroke: #f53003 !important;
-        }
-        .ql-toolbar.ql-snow button:hover .ql-fill,
-        .ql-toolbar.ql-snow button.ql-active .ql-fill,
-        .ql-toolbar.ql-snow .ql-picker-label:hover .ql-fill,
-        .ql-toolbar.ql-snow .ql-picker-item:hover .ql-fill,
-        .ql-toolbar.ql-snow .ql-picker-item.ql-selected .ql-fill {
-            fill: #f53003 !important;
-        }
-        .dark #quill-editor.ql-editor {
-            background-color: #121212;
-            color: #F7F7F5;
-        }
-        .dark .ql-toolbar.ql-snow {
-            background-color: #1a1a1a !important;
-            border-color: #3E3E3A;
-        }
-        .dark .ql-toolbar.ql-snow .ql-stroke {
-            stroke: #F7F7F5 !important;
-        }
-        .dark .ql-toolbar.ql-snow .ql-fill {
-            fill: #F7F7F5 !important;
-        }
-        .dark .ql-toolbar.ql-snow .ql-picker-label {
+        .dark .ck-editor__editable_inline {
+            background-color: #121212 !important;
             color: #F7F7F5 !important;
+            border-color: #3E3E3A !important;
+        }
+        .dark .ck-toolbar {
+            background-color: #1a1a1a !important;
+            border-color: #3E3E3A !important;
+        }
+        .dark .ck.ck-toolbar__separator {
+            background-color: #3E3E3A !important;
+        }
+        .dark .ck.ck-button {
+            color: #F7F7F5 !important;
+        }
+        .dark .ck.ck-button:hover {
+            background-color: #2a2a2a !important;
+        }
+        .ck.ck-editor__main>.ck-editor__editable:not(.ck-focused) {
+            border-color: #e3e3e0 !important;
+        }
+        .ck.ck-editor__main>.ck-editor__editable.ck-focused {
+            border-color: #f53003 !important;
+            box-shadow: 0 0 0 2px #f0dad8 !important;
+        }
+        .dark .ck.ck-editor__main>.ck-editor__editable.ck-focused {
+            border-color: #f53003 !important;
+            box-shadow: 0 0 0 2px rgba(245, 48, 3, 0.2) !important;
         }
     </style>
 @endsection
@@ -92,9 +67,39 @@
                     @endif
 
                     <div class="mb-6">
-                        <label for="quill-editor" class="mb-2 block text-sm font-medium text-[#1b1b18] dark:text-white">Catatan</label>
-                        <input id="note-content" type="hidden" name="note" value="{{ old('note') }}" />
-                        <div id="quill-editor" class="min-h-[280px] rounded-[24px] border border-[#e3e3e0] bg-[#FCFBF8] p-4 text-sm leading-7 text-[#1b1b18] shadow-sm outline-none transition dark:border-[#3E3E3A] dark:bg-[#121212] dark:text-[#F7F7F5]">{!! old('note') !!}</div>
+                        <label for="title" class="mb-2 block text-sm font-medium text-[#1b1b18] dark:text-white">Judul Catatan / Blog</label>
+                        <input id="title" name="title" type="text" value="{{ old('title') }}" placeholder="Masukkan judul..." class="w-full rounded-[18px] border border-[#e3e3e0] bg-white px-4 py-3 text-sm text-[#1b1b18] shadow-sm outline-none transition focus:border-[#f53003] focus:ring-2 focus:ring-[#f0dad8] dark:border-[#3E3E3A] dark:bg-[#101010] dark:text-[#F7F7F5] dark:focus:border-[#f53003]" required />
+                    </div>
+
+                    <div class="mb-6 grid grid-cols-1 gap-6 md:grid-cols-3">
+                        <div>
+                            <label for="type" class="mb-2 block text-sm font-medium text-[#1b1b18] dark:text-white">Tipe</label>
+                            <select id="type" name="type" class="w-full rounded-[18px] border border-[#e3e3e0] bg-white px-4 py-3 text-sm text-[#1b1b18] shadow-sm outline-none transition focus:border-[#f53003] focus:ring-2 focus:ring-[#f0dad8] dark:border-[#3E3E3A] dark:bg-[#101010] dark:text-[#F7F7F5] dark:focus:border-[#f53003]">
+                                <option value="post" {{ old('type') == 'post' ? 'selected' : '' }}>Post (Blog)</option>
+                                <option value="page" {{ old('type') == 'page' ? 'selected' : '' }}>Page (Statis)</option>
+                            </select>
+                        </div>
+                        <div>
+                            <label for="category_id" class="mb-2 block text-sm font-medium text-[#1b1b18] dark:text-white">Kategori</label>
+                            <select id="category_id" name="category_id" class="w-full rounded-[18px] border border-[#e3e3e0] bg-white px-4 py-3 text-sm text-[#1b1b18] shadow-sm outline-none transition focus:border-[#f53003] focus:ring-2 focus:ring-[#f0dad8] dark:border-[#3E3E3A] dark:bg-[#101010] dark:text-[#F7F7F5] dark:focus:border-[#f53003]">
+                                <option value="">Pilih Kategori</option>
+                                @foreach($categories as $category)
+                                    <option value="{{ $category->id }}" {{ old('category_id') == $category->id ? 'selected' : '' }}>{{ $category->name }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                        <div>
+                            <label for="status" class="mb-2 block text-sm font-medium text-[#1b1b18] dark:text-white">Status</label>
+                            <select id="status" name="status" class="w-full rounded-[18px] border border-[#e3e3e0] bg-white px-4 py-3 text-sm text-[#1b1b18] shadow-sm outline-none transition focus:border-[#f53003] focus:ring-2 focus:ring-[#f0dad8] dark:border-[#3E3E3A] dark:bg-[#101010] dark:text-[#F7F7F5] dark:focus:border-[#f53003]">
+                                <option value="draft" {{ old('status') == 'draft' ? 'selected' : '' }}>Draft</option>
+                                <option value="published" {{ old('status') == 'published' ? 'selected' : '' }}>Published</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="mb-6">
+                        <label for="editor" class="mb-2 block text-sm font-medium text-[#1b1b18] dark:text-white">Isi Konten</label>
+                        <textarea id="editor" name="note" class="hidden">{{ old('note') }}</textarea>
                     </div>
 
                     <div class="mb-6">
@@ -116,29 +121,89 @@
 @endsection
 
 @section('scripts')
-    <script src="https://cdn.quilljs.com/1.3.7/quill.min.js"></script>
+    <script src="https://cdn.ckeditor.com/ckeditor5/41.1.0/classic/ckeditor.js"></script>
     <script>
-        document.addEventListener('DOMContentLoaded', function () {
-            const quill = new Quill('#quill-editor', {
-                theme: 'snow',
-                modules: {
-                    toolbar: [
-                        [{ header: [1, 2, 3, false] }],
-                        ['bold', 'italic', 'underline', 'strike', 'code-block'],
-                        [{ list: 'ordered' }, { list: 'bullet' }],
-                        ['blockquote', 'link', 'image'],
-                        [{ color: [] }, { background: [] }],
-                        ['clean']
+        class MyUploadAdapter {
+            constructor(loader) {
+                this.loader = loader;
+            }
+
+            upload() {
+                return this.loader.file
+                    .then(file => new Promise((resolve, reject) => {
+                        this._initRequest();
+                        this._initListeners(resolve, reject, file);
+                        this._sendRequest(file);
+                    }));
+            }
+
+            abort() {
+                if (this.xhr) {
+                    this.xhr.abort();
+                }
+            }
+
+            _initRequest() {
+                const xhr = this.xhr = new XMLHttpRequest();
+                xhr.open('POST', '{{ route("ckeditor.upload") }}', true);
+                xhr.setRequestHeader('x-csrf-token', '{{ csrf_token() }}');
+                xhr.responseType = 'json';
+            }
+
+            _initListeners(resolve, reject, file) {
+                const xhr = this.xhr;
+                const loader = this.loader;
+                const genericErrorText = `Couldn't upload file: ${file.name}.`;
+
+                xhr.addEventListener('error', () => reject(genericErrorText));
+                xhr.addEventListener('abort', () => reject());
+                xhr.addEventListener('load', () => {
+                    const response = xhr.response;
+                    if (!response || response.error) {
+                        return reject(response && response.error ? response.error : genericErrorText);
+                    }
+                    resolve({
+                        default: response.url
+                    });
+                });
+
+                if (xhr.upload) {
+                    xhr.upload.addEventListener('progress', evt => {
+                        if (evt.lengthComputable) {
+                            loader.uploadTotal = evt.total;
+                            loader.uploaded = evt.loaded;
+                        }
+                    });
+                }
+            }
+
+            _sendRequest(file) {
+                const data = new FormData();
+                data.append('upload', file);
+                this.xhr.send(data);
+            }
+        }
+
+        function MyCustomUploadAdapterPlugin(editor) {
+            editor.plugins.get('FileRepository').createUploadAdapter = (loader) => {
+                return new MyUploadAdapter(loader);
+            };
+        }
+
+        ClassicEditor
+            .create(document.querySelector('#editor'), {
+                extraPlugins: [MyCustomUploadAdapterPlugin],
+                toolbar: {
+                    items: [
+                        'heading', '|',
+                        'bold', 'italic', 'link', 'bulletedList', 'numberedList', '|',
+                        'outdent', 'indent', '|',
+                        'imageUpload', 'blockQuote', 'insertTable', 'mediaEmbed', 'undo', 'redo'
                     ]
                 }
+            })
+            .catch(error => {
+                console.error(error);
             });
-
-            const form = document.querySelector('#note-form');
-            const hiddenInput = document.querySelector('#note-content');
-
-            form.addEventListener('submit', function () {
-                hiddenInput.value = quill.root.innerHTML;
-            });
-        });
     </script>
 @endsection
