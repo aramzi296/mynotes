@@ -148,9 +148,13 @@ class NoteController extends Controller
     {
         if ($request->hasFile('upload')) {
             $path = $request->file('upload')->store('images', 'public');
+            $url = \Illuminate\Support\Facades\Storage::disk('public')->url($path);
+            
+            // Gunakan path relatif dari root agar lebih kompatibel
+            $url = parse_url($url, PHP_URL_PATH);
 
             return response()->json([
-                'url' => asset('storage/' . $path),
+                'url' => $url,
             ]);
         }
 

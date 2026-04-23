@@ -96,29 +96,50 @@
             content_css: (window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'default',
             images_upload_url: '{{ route("ckeditor.upload") }}',
             automatic_uploads: true,
-            images_upload_handler: function (blobInfo, success, failure) {
-                var xhr, formData;
-                xhr = new XMLHttpRequest();
+            relative_urls: false,
+            remove_script_host: false,
+            document_base_url: '{{ url("/") }}/',
+            content_style: 'body { font-family:Inter,Arial,sans-serif; font-size:16px } img { max-width: 100%; height: auto; border-radius: 8px; }',
+            images_upload_handler: (blobInfo, progress) => new Promise((resolve, reject) => {
+                const xhr = new XMLHttpRequest();
                 xhr.withCredentials = false;
                 xhr.open('POST', '{{ route("ckeditor.upload") }}');
                 xhr.setRequestHeader('X-CSRF-TOKEN', '{{ csrf_token() }}');
-                xhr.onload = function() {
-                    var json;
-                    if (xhr.status != 200) {
-                        failure('HTTP Error: ' + xhr.status);
-                        return;
-                    }
-                    json = JSON.parse(xhr.responseText);
-                    if (!json || typeof json.url != 'string') {
-                        failure('Invalid JSON: ' + xhr.responseText);
-                        return;
-                    }
-                    success(json.url);
+
+                xhr.upload.onprogress = (e) => {
+                    progress(e.loaded / e.total * 100);
                 };
-                formData = new FormData();
+
+                xhr.onload = () => {
+                    if (xhr.status === 403) {
+                        reject({ message: 'HTTP Error: ' + xhr.status, remove: true });
+                        return;
+                    }
+
+                    if (xhr.status < 200 || xhr.status >= 300) {
+                        reject('HTTP Error: ' + xhr.status);
+                        return;
+                    }
+
+                    const json = JSON.parse(xhr.responseText);
+
+                    if (!json || typeof json.url != 'string') {
+                        reject('Invalid JSON: ' + xhr.responseText);
+                        return;
+                    }
+
+                    resolve(json.url);
+                };
+
+                xhr.onerror = () => {
+                    reject('Image upload failed due to a XHR Transport error. Code: ' + xhr.status);
+                };
+
+                const formData = new FormData();
                 formData.append('upload', blobInfo.blob(), blobInfo.filename());
+
                 xhr.send(formData);
-            }
+            })
         });
     </script>
 @endsection
