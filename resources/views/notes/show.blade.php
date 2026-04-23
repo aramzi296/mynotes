@@ -3,13 +3,42 @@
 @section('title', config('app.name', 'Laravel') . ' - Detail Catatan')
 
 @section('styles')
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/styles/github-dark.min.css">
     <style>
         .note-content img {
             max-width: 100%;
             height: auto;
-            border-radius: 16px;
-            margin: 1.5rem 0;
+            border-radius: 12px;
+            margin: 0.5rem;
+            display: inline-block !important;
             box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+        }
+        .note-content .image-side {
+            float: right;
+            margin-left: 1.5rem;
+            max-width: 50%;
+        }
+        .note-content .image-inline {
+            display: inline-block;
+            margin: 0 0.5rem;
+            vertical-align: middle;
+        }
+        .note-content figure.image {
+            margin: 1.5rem 0;
+            display: table;
+            clear: both;
+        }
+        .note-content figure.image img {
+            margin: 0;
+        }
+        .note-content figure.image figcaption {
+            display: table-caption;
+            caption-side: bottom;
+            background-color: #f8f9fa;
+            padding: 0.5rem;
+            font-size: 0.8rem;
+            color: #6c757d;
+            text-align: center;
         }
         .note-content ul {
             list-style-type: disc;
@@ -33,7 +62,36 @@
             color: #6f6d69;
             margin: 1rem 0;
         }
+        .note-content pre {
+            background-color: #1a1a1a;
+            border-radius: 12px;
+            padding: 1rem;
+            overflow-x: auto;
+            margin: 1.5rem 0;
+        }
+        .note-content code {
+            font-family: 'Fira Code', 'Courier New', Courier, monospace;
+            font-size: 0.9em;
+            background-color: #f0f0f0;
+            padding: 0.2rem 0.4rem;
+            border-radius: 4px;
+            color: #d23131;
+        }
+        .dark .note-content code {
+            background-color: #1a1a1a;
+            color: #ff6b35;
+        }
+        .note-content pre code {
+            background-color: transparent;
+            padding: 0;
+            color: inherit;
+        }
     </style>
+@endsection
+
+@section('scripts')
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/highlight.js/11.9.0/highlight.min.js"></script>
+    <script>hljs.highlightAll();</script>
 @endsection
 
 @section('content')

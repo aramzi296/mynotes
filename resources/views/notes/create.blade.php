@@ -4,46 +4,14 @@
 
 @section('styles')
     <style>
-        .ck-editor__editable_inline {
-            min-height: 280px;
-            background-color: #FCFBF8 !important;
-            color: #1b1b18 !important;
-            border-radius: 0 0 24px 24px !important;
-            padding: 0 1.5rem !important;
+        .tox-tinymce {
+            border-radius: 12px !important;
+            border: 1px solid #e3e3e0 !important;
+            overflow: hidden;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
         }
-        .ck-toolbar {
-            background-color: #F7F5F2 !important;
-            border-radius: 24px 24px 0 0 !important;
-            border-color: #e3e3e0 !important;
-        }
-        .dark .ck-editor__editable_inline {
-            background-color: #121212 !important;
-            color: #F7F7F5 !important;
+        .dark .tox-tinymce {
             border-color: #3E3E3A !important;
-        }
-        .dark .ck-toolbar {
-            background-color: #1a1a1a !important;
-            border-color: #3E3E3A !important;
-        }
-        .dark .ck.ck-toolbar__separator {
-            background-color: #3E3E3A !important;
-        }
-        .dark .ck.ck-button {
-            color: #F7F7F5 !important;
-        }
-        .dark .ck.ck-button:hover {
-            background-color: #2a2a2a !important;
-        }
-        .ck.ck-editor__main>.ck-editor__editable:not(.ck-focused) {
-            border-color: #e3e3e0 !important;
-        }
-        .ck.ck-editor__main>.ck-editor__editable.ck-focused {
-            border-color: #f53003 !important;
-            box-shadow: 0 0 0 2px #f0dad8 !important;
-        }
-        .dark .ck.ck-editor__main>.ck-editor__editable.ck-focused {
-            border-color: #f53003 !important;
-            box-shadow: 0 0 0 2px rgba(245, 48, 3, 0.2) !important;
         }
     </style>
 @endsection
@@ -59,12 +27,6 @@
 
                 <form id="note-form" action="{{ route('notes.store') }}" method="POST" enctype="multipart/form-data">
                     @csrf
-
-                    @if (session('status'))
-                        <div class="mb-6 rounded-[20px] border border-[#d7e9d6] bg-[#f0fbf2] p-4 text-sm text-[#1f5f2f] dark:border-[#21492e] dark:bg-[#132314] dark:text-[#b7e3b2]">
-                            {{ session('status') }}
-                        </div>
-                    @endif
 
                     <div class="mb-6">
                         <label for="title" class="mb-2 block text-sm font-medium text-[#1b1b18] dark:text-white">Judul Catatan / Blog</label>
@@ -99,12 +61,12 @@
 
                     <div class="mb-6">
                         <label for="editor" class="mb-2 block text-sm font-medium text-[#1b1b18] dark:text-white">Isi Konten</label>
-                        <textarea id="editor" name="note" class="hidden">{{ old('note') }}</textarea>
+                        <textarea id="editor" name="note">{{ old('note') }}</textarea>
                     </div>
 
                     <div class="mb-6">
                         <label for="tags" class="mb-2 block text-sm font-medium text-[#1b1b18] dark:text-white">Tags</label>
-                        <input id="tags" name="tags" type="text" placeholder="contoh: meeting, ide, tugas" class="w-full rounded-[18px] border border-[#e3e3e0] bg-white px-4 py-3 text-sm text-[#1b1b18] shadow-sm outline-none transition focus:border-[#d23131] focus:ring-2 focus:ring-[#f0dad8] dark:border-[#3E3E3A] dark:bg-[#101010] dark:text-[#F7F7F5] dark:focus:border-[#f53003]" />
+                        <input id="tags" name="tags" type="text" placeholder="contoh: meeting, ide, tugas" class="w-full rounded-[18px] border border-[#e3e3e0] bg-white px-4 py-3 text-sm text-[#1b1b18] shadow-sm outline-none transition focus:border-[#f53003] focus:ring-2 focus:ring-[#f0dad8] dark:border-[#3E3E3A] dark:bg-[#101010] dark:text-[#F7F7F5] dark:focus:border-[#f53003]" />
                     </div>
 
                     <div class="mb-8">
@@ -121,89 +83,42 @@
 @endsection
 
 @section('scripts')
-    <script src="https://cdn.ckeditor.com/ckeditor5/41.1.0/classic/ckeditor.js"></script>
+    <script src="{{ asset('js/tinymce/tinymce.min.js') }}"></script>
     <script>
-        class MyUploadAdapter {
-            constructor(loader) {
-                this.loader = loader;
-            }
-
-            upload() {
-                return this.loader.file
-                    .then(file => new Promise((resolve, reject) => {
-                        this._initRequest();
-                        this._initListeners(resolve, reject, file);
-                        this._sendRequest(file);
-                    }));
-            }
-
-            abort() {
-                if (this.xhr) {
-                    this.xhr.abort();
-                }
-            }
-
-            _initRequest() {
-                const xhr = this.xhr = new XMLHttpRequest();
-                xhr.open('POST', '{{ route("ckeditor.upload") }}', true);
-                xhr.setRequestHeader('x-csrf-token', '{{ csrf_token() }}');
-                xhr.responseType = 'json';
-            }
-
-            _initListeners(resolve, reject, file) {
-                const xhr = this.xhr;
-                const loader = this.loader;
-                const genericErrorText = `Couldn't upload file: ${file.name}.`;
-
-                xhr.addEventListener('error', () => reject(genericErrorText));
-                xhr.addEventListener('abort', () => reject());
-                xhr.addEventListener('load', () => {
-                    const response = xhr.response;
-                    if (!response || response.error) {
-                        return reject(response && response.error ? response.error : genericErrorText);
+        tinymce.init({
+            selector: '#editor',
+            license_key: 'gpl',
+            plugins: 'image code table lists link media wordcount autoresize',
+            toolbar: 'undo redo | blocks | bold italic | alignleft aligncenter alignright | bullist numlist | link image media | code blockquote',
+            menubar: false,
+            min_height: 400,
+            skin: (window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'oxide-dark' : 'oxide',
+            content_css: (window.matchMedia('(prefers-color-scheme: dark)').matches) ? 'dark' : 'default',
+            images_upload_url: '{{ route("ckeditor.upload") }}',
+            automatic_uploads: true,
+            images_upload_handler: function (blobInfo, success, failure) {
+                var xhr, formData;
+                xhr = new XMLHttpRequest();
+                xhr.withCredentials = false;
+                xhr.open('POST', '{{ route("ckeditor.upload") }}');
+                xhr.setRequestHeader('X-CSRF-TOKEN', '{{ csrf_token() }}');
+                xhr.onload = function() {
+                    var json;
+                    if (xhr.status != 200) {
+                        failure('HTTP Error: ' + xhr.status);
+                        return;
                     }
-                    resolve({
-                        default: response.url
-                    });
-                });
-
-                if (xhr.upload) {
-                    xhr.upload.addEventListener('progress', evt => {
-                        if (evt.lengthComputable) {
-                            loader.uploadTotal = evt.total;
-                            loader.uploaded = evt.loaded;
-                        }
-                    });
-                }
+                    json = JSON.parse(xhr.responseText);
+                    if (!json || typeof json.url != 'string') {
+                        failure('Invalid JSON: ' + xhr.responseText);
+                        return;
+                    }
+                    success(json.url);
+                };
+                formData = new FormData();
+                formData.append('upload', blobInfo.blob(), blobInfo.filename());
+                xhr.send(formData);
             }
-
-            _sendRequest(file) {
-                const data = new FormData();
-                data.append('upload', file);
-                this.xhr.send(data);
-            }
-        }
-
-        function MyCustomUploadAdapterPlugin(editor) {
-            editor.plugins.get('FileRepository').createUploadAdapter = (loader) => {
-                return new MyUploadAdapter(loader);
-            };
-        }
-
-        ClassicEditor
-            .create(document.querySelector('#editor'), {
-                extraPlugins: [MyCustomUploadAdapterPlugin],
-                toolbar: {
-                    items: [
-                        'heading', '|',
-                        'bold', 'italic', 'link', 'bulletedList', 'numberedList', '|',
-                        'outdent', 'indent', '|',
-                        'imageUpload', 'blockQuote', 'insertTable', 'mediaEmbed', 'undo', 'redo'
-                    ]
-                }
-            })
-            .catch(error => {
-                console.error(error);
-            });
+        });
     </script>
 @endsection
